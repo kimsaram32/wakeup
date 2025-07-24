@@ -21,17 +21,17 @@ export const runInteractionHandler: InteractionHandler = {
     const { adminRoleId, targetRoleId } = await guildSettings.get(guildId);
 
     const userIds = await voiceChannelUsers.get(guildId);
-    const members = await guild.members.fetch({ user: userIds });
-    const targetMembers = members.filter((member) =>
-      member.roles.cache.has(targetRoleId)
+
+    const targetRole = await guild.roles.fetch(targetRoleId);
+    if (!targetRole) {
+      return;
+    }
+    const targetUserIds = userIds.filter((userId) =>
+      targetRole.members.some((member) => member.user.id === userId),
     );
 
     await runRecord.createMany(
-      targetMembers.map((member) => ({
-        guildId,
-        userId: member.user.id,
-        date,
-      })),
+      targetUserIds.map((userId) => ({ guildId, userId, date })),
     );
 
     interaction.reply("출첵");

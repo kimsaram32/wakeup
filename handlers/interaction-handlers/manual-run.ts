@@ -6,7 +6,11 @@ import { InteractionHandler } from "../types.ts";
 export const manualRunInteractionHandler: InteractionHandler = {
   name: "출첵_수동",
   async execute(interaction) {
-    const userId = interaction.options.getUser("점호_참여자")!.id;
+    const userId = interaction.options.getUser("점호_참여자")?.id;
+    if (!userId) {
+      interaction.reply("점호 참여자를 입력해주세요");
+      return;
+    }
 
     const guildId = interaction.guildId;
     if (!guildId) {
@@ -21,10 +25,14 @@ export const manualRunInteractionHandler: InteractionHandler = {
 
     const guild = await interaction.client.guilds.fetch(guildId);
 
-    const targetMember = await guild.members.fetch(userId);
     const { adminRoleId, targetRoleId } = await guildSettings.get(guildId);
 
-    if (!targetMember.roles.cache.has(targetRoleId)) {
+    const targetRole = await guild.roles.fetch(targetRoleId)
+    if (!targetRole) {
+      return;
+    }
+
+    if (!targetRole.members.some((member) => member.user.id === userId)) {
       interaction.reply("점호 참여자가 아닙니다");
       return;
     }
