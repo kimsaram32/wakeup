@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --watch -A main.ts"
+    "dev": "deno run --watch --unstable-temporal -A main.ts"
   },
   "imports": {
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
