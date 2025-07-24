@@ -1,6 +1,6 @@
 import { guildSettings } from "../../entities/guild-settings.ts";
 import { runRecord } from "../../entities/run-record.ts";
-import { voiceChannelUsers } from "../../entities/voice-channel-users.ts";
+import { isWeekday } from "../../utils/is-weekday.ts";
 import { InteractionHandler } from "../types.ts";
 
 export const manualRunInteractionHandler: InteractionHandler = {
@@ -12,6 +12,13 @@ export const manualRunInteractionHandler: InteractionHandler = {
     if (!guildId) {
       return;
     }
+
+    const date = Temporal.Now.zonedDateTimeISO("Asia/Seoul");
+    if (!isWeekday(date.dayOfWeek)) {
+      interaction.reply("점호 가능 날짜가 아닙니다");
+      return;
+    }
+
     const guild = await interaction.client.guilds.fetch(guildId);
 
     const targetMember = await guild.members.fetch(userId);
@@ -21,8 +28,6 @@ export const manualRunInteractionHandler: InteractionHandler = {
       interaction.reply("점호 참여자가 아닙니다");
       return;
     }
-
-    const date = Temporal.Now.zonedDateTimeISO("Asia/Seoul");
 
     await runRecord.create({
       guildId,
