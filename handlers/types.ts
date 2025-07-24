@@ -5,6 +5,12 @@ export type EventHandler<T extends keyof ClientEvents> = {
   execute: (...args: ClientEvents[T]) => void;
 };
 
+export function defineEventHandler<T extends keyof ClientEvents>(
+  handler: EventHandler<T>,
+): EventHandler<T> {
+  return handler;
+}
+
 export type InteractionHandler = {
   name: string;
   execute: (interaction: ChatInputCommandInteraction) => void;
