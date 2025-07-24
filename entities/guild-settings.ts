@@ -1,3 +1,5 @@
+import { knex } from "../utils/postgres.ts";
+
 export type GuildSettings = {
   id: string;
   targetChannelId: string;
@@ -6,12 +8,21 @@ export type GuildSettings = {
 };
 
 export const guildSettings = {
-  async get(guildId: string): Promise<GuildSettings> {
+  async get(guildId: string): Promise<GuildSettings | null> {
+    const result = await knex("guild_settings")
+      .select("target_channel_id", "target_role_id", "admin_role_id")
+      .where("id", guildId)
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
     return {
       id: guildId,
-      targetChannelId: "foo",
-      targetRoleId: "foo",
-      adminRoleId: "foo",
+      targetChannelId: result.target_channel_id,
+      targetRoleId: result.target_role_id,
+      adminRoleId: result.admin_role_id,
     };
   },
 
@@ -19,7 +30,17 @@ export const guildSettings = {
     guildId: string,
     updated: Partial<Omit<GuildSettings, "id">>,
   ): Promise<void> {
-    guildId;
-    updated;
+    const payload = {
+      target_channel_id: updated.targetChannelId,
+      target_role_id: updated.targetRoleId,
+      admin_role_id: updated.adminRoleId,
+    };
+    await knex.transaction(async (t) => {
+      if (await t("guild_settings").where("id", guildId)) {
+        await t("guild_settings").where("id", guildId).update(payload);
+      } else {
+        await t("guild_settings").insert({ ...payload, id: guildId });
+      }
+    });
   },
 };

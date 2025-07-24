@@ -25,7 +25,12 @@ export const manualRunInteractionHandler: InteractionHandler = {
 
     const guild = await interaction.client.guilds.fetch(guildId);
 
-    const { adminRoleId, targetRoleId } = await guildSettings.get(guildId);
+    // deno-lint-ignore no-explicit-any
+    const { adminRoleId, targetRoleId } = await guildSettings.get(guildId) ?? {} as any;
+    if (!adminRoleId || !targetRoleId) {
+      interaction.reply("설정이 필요합니다");
+      return;
+    }
 
     const targetRole = await guild.roles.fetch(targetRoleId)
     if (!targetRole) {
