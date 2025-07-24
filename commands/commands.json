@@ -1,0 +1,47 @@
+[
+  {
+    "name": "설정",
+    "type": 1,
+    "description": "설명",
+    "options": [
+      {
+        "type": 7,
+        "name": "점호_채널",
+        "description": "설명"
+      },
+      {
+        "type": 8,
+        "name": "점호_참여자_역할",
+        "description": "설명"
+      },
+      {
+        "type": 8,
+        "name": "관리자_역할",
+        "description": "설명"
+      }
+    ]
+  },
+  {
+    "name": "출첵",
+    "type": 1,
+    "description": "설명"
+  },
+  {
+    "name": "출첵_수동",
+    "type": 1,
+    "description": "설명",
+    "options": [
+      {
+        "type": 6,
+        "name": "점호_참여자",
+        "description": "설명",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "스트릭",
+    "type": 1,
+    "description": "설명"
+  }
+]
