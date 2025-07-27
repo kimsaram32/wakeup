@@ -70,7 +70,10 @@ export const showStreakInteractionHandler: InteractionHandler = {
       return streak;
     });
 
-    const sortedMemberIdAndStreaks = zip(targetMemberIds, streaks).sort((a, b) => b[1] - a[1]);
+    const sortedMemberIdAndStreaks = zip(targetMemberIds, streaks).sort((
+      a,
+      b,
+    ) => b[1] - a[1]);
 
     interaction.reply({
       embeds: [
@@ -78,7 +81,9 @@ export const showStreakInteractionHandler: InteractionHandler = {
           .setTitle("점호 스트릭 현황")
           .setDescription(
             sortedMemberIdAndStreaks
-              .map(([id, streak], index) => `${index + 1}. <@${id}> (${streak}일)`)
+              .map(([id, streak], index) =>
+                `${index + 1}. <@${id}> (${streak}일)`
+              )
               .join("\n"),
           ),
       ],

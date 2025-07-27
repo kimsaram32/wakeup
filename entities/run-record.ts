@@ -30,7 +30,7 @@ export const runRecord = {
       .groupBy("user_id")
       .groupBy(knex.raw("DATE(created_at)"));
 
-    return result.map((row: { user_id: string, date: Date }) => ({
+    return result.map((row: { user_id: string; date: Date }) => ({
       guildId,
       userId: row.user_id,
       date: row.date.toTemporalInstant().toZonedDateTimeISO(Config.timezone),

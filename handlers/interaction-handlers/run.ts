@@ -36,7 +36,7 @@ export const runInteractionHandler: InteractionHandler = {
       return;
     }
     const targetUserIds = userIds.filter((userId) =>
-      targetRole.members.some((member) => member.user.id === userId),
+      targetRole.members.some((member) => member.user.id === userId)
     );
 
     await runRecord.createMany(
@@ -49,7 +49,7 @@ export const runInteractionHandler: InteractionHandler = {
     );
 
     const dateFormatter = new Intl.DateTimeFormat("ko", {
-      dateStyle: "long"
+      dateStyle: "long",
     });
 
     interaction.reply({

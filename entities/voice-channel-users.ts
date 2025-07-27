@@ -5,7 +5,7 @@ export type VoiceChannelUsers = {
   userIds: string[];
 };
 
-const toKey = (guildId: string) => `voiceChannel${guildId}`
+const toKey = (guildId: string) => `voiceChannel${guildId}`;
 
 export const voiceChannelUsers = {
   async get(guildId: string): Promise<string[]> {
