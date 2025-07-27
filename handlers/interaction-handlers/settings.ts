@@ -30,7 +30,7 @@ export const settingsInteractionHandler: InteractionHandler = {
     });
 
     interaction.reply({
-      content: "Added",
+      content: "설정되었습니다",
     });
   },
 };

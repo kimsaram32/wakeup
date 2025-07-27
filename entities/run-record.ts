@@ -8,9 +8,13 @@ export type RunRecord = {
 
 const padded = (x: number) => String(x).padStart(2, "0");
 
+function formatZoneDateTimeToPostgresDate(zdt: Temporal.ZonedDateTime) {
+  return `${zdt.year}-${padded(zdt.month)}-${padded(zdt.day)}`;
+}
+
 function formatZoneDateTimeToPostgresTimestamp(zdt: Temporal.ZonedDateTime) {
   return [
-    `${zdt.year}-${padded(zdt.month)}-${padded(zdt.day)}`,
+    formatZoneDateTimeToPostgresDate(zdt),
     `${padded(zdt.hour)}:${padded(zdt.minute)}:${padded(zdt.second)}`,
     zdt.offset,
   ].join(" ");
@@ -18,14 +22,33 @@ function formatZoneDateTimeToPostgresTimestamp(zdt: Temporal.ZonedDateTime) {
 
 export const runRecord = {
   async getAll(guildId: string): Promise<RunRecord[]> {
-    const raw = await knex("run_record")
-      .select("user_id", "created_at")
-      .where("guild_id", guildId);
-    return raw.map((record) => ({
+    const result = await knex("run_record")
+      .select("user_id")
+      .select(knex.raw("DATE(created_at) as date"))
+      .where("guild_id", guildId)
+      .groupBy("user_id")
+      .groupBy(knex.raw("DATE(created_at)"));
+
+    return result.map((row: { user_id: string, date: Date }) => ({
       guildId,
-      userId: record.user_id,
-      date: record.created_at.toTemporalInstant().toZonedDateTimeISO("Asia/Seoul"),
+      userId: row.user_id,
+      date: row.date.toTemporalInstant().toZonedDateTimeISO("Asia/Seoul"),
     }));
+  },
+
+  async getMemberIdsParticipatedToday(
+    guildId: string,
+    date: Temporal.ZonedDateTime,
+  ): Promise<string[]> {
+    const result = await knex("run_record")
+      .select("user_id")
+      .where("guild_id", guildId)
+      .whereRaw("DATE(created_at) = ?", [
+        formatZoneDateTimeToPostgresDate(date),
+      ])
+      .groupBy("user_id");
+
+    return result.map((row) => row.user_id);
   },
 
   async create(newRecord: RunRecord): Promise<void> {
@@ -37,6 +60,10 @@ export const runRecord = {
   },
 
   async createMany(newRecords: RunRecord[]): Promise<void> {
+    if (!newRecords.length) {
+      return;
+    }
+
     await knex("run_record").insert(
       newRecords.map((newRecord) => ({
         guild_id: newRecord.guildId,

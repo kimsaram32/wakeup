@@ -1,3 +1,4 @@
+import { EmbedBuilder } from "discord.js";
 import { guildSettings } from "../../entities/guild-settings.ts";
 import { runRecord } from "../../entities/run-record.ts";
 import { voiceChannelUsers } from "../../entities/voice-channel-users.ts";
@@ -18,8 +19,9 @@ export const runInteractionHandler: InteractionHandler = {
     }
 
     const guild = await interaction.client.guilds.fetch(guildId);
-    // deno-lint-ignore no-explicit-any
-    const { adminRoleId, targetRoleId } = await guildSettings.get(guildId) ?? {} as any;
+    const { adminRoleId, targetRoleId } =
+      // deno-lint-ignore no-explicit-any
+      (await guildSettings.get(guildId)) ?? ({} as any);
     if (!adminRoleId || !targetRoleId) {
       interaction.reply("설정이 필요합니다");
       return;
@@ -27,6 +29,7 @@ export const runInteractionHandler: InteractionHandler = {
 
     const userIds = await voiceChannelUsers.get(guildId);
 
+    await guild.members.fetch();
     const targetRole = await guild.roles.fetch(targetRoleId);
     if (!targetRole) {
       return;
@@ -39,6 +42,23 @@ export const runInteractionHandler: InteractionHandler = {
       targetUserIds.map((userId) => ({ guildId, userId, date })),
     );
 
-    interaction.reply("출첵");
+    const participatedMemberIds = await runRecord.getMemberIdsParticipatedToday(
+      guildId,
+      date,
+    );
+
+    const dateFormatter = new Intl.DateTimeFormat("ko", {
+      dateStyle: "long"
+    });
+
+    interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(`${dateFormatter.format(date.toPlainDate())} 기상점호`)
+          .setDescription(
+            participatedMemberIds.map((id) => `- <@${id}>`).join("\n"),
+          ),
+      ],
+    });
   },
 };

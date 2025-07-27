@@ -5,7 +5,7 @@ import { eventHandlers } from "./handlers/event-handlers.ts";
 
 // todo: validations
 const client = new Client({
-  intents: [GatewayIntentBits.GuildVoiceStates],
+  intents: [GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMembers],
 });
 
 for (const eventHandler of eventHandlers) {
