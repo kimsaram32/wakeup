@@ -10,5 +10,6 @@ export const Config = {
   },
   redis: {
     url: Deno.env.get("REDIS_URL") as string,
-  }
+  },
+  timezone: "Asia/Seoul",
 };

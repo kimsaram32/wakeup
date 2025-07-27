@@ -1,3 +1,4 @@
+import { Config } from "../../config.ts";
 import { guildSettings } from "../../entities/guild-settings.ts";
 import { runRecord } from "../../entities/run-record.ts";
 import { isWeekday } from "../../utils/is-weekday.ts";
@@ -17,7 +18,7 @@ export const manualRunInteractionHandler: InteractionHandler = {
       return;
     }
 
-    const date = Temporal.Now.zonedDateTimeISO("Asia/Seoul");
+    const date = Temporal.Now.zonedDateTimeISO(Config.timezone);
     if (!isWeekday(date.dayOfWeek)) {
       interaction.reply("점호 가능 날짜가 아닙니다");
       return;

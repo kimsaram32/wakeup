@@ -1,3 +1,4 @@
+import { Config } from "../config.ts";
 import { knex } from "../utils/postgres.ts";
 
 export type RunRecord = {
@@ -32,7 +33,7 @@ export const runRecord = {
     return result.map((row: { user_id: string, date: Date }) => ({
       guildId,
       userId: row.user_id,
-      date: row.date.toTemporalInstant().toZonedDateTimeISO("Asia/Seoul"),
+      date: row.date.toTemporalInstant().toZonedDateTimeISO(Config.timezone),
     }));
   },
 

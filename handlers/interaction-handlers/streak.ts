@@ -3,6 +3,7 @@ import { EmbedBuilder } from "discord.js";
 import { guildSettings } from "../../entities/guild-settings.ts";
 import { runRecord } from "../../entities/run-record.ts";
 import { InteractionHandler } from "../types.ts";
+import { Config } from "../../config.ts";
 
 function createRecordMap(
   records: { userId: string; date: Temporal.PlainDate }[],
@@ -52,7 +53,7 @@ export const showStreakInteractionHandler: InteractionHandler = {
     const recordMap = createRecordMap(records);
 
     const aDay = Temporal.Duration.from({ days: 1 });
-    const today = Temporal.Now.plainDateISO("Asia/Seoul");
+    const today = Temporal.Now.plainDateISO(Config.timezone);
 
     const streaks = targetMemberIds.map((id) => {
       const set = recordMap.get(id);
