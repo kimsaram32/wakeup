@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --watch --unstable-temporal -A main.ts"
+    "dev": "deno run --watch --unstable-temporal -A src/main.ts"
   },
   "imports": {
     "@std/collections": "jsr:@std/collections@^1.1.2",

@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_username
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: ${POSTGRES_DB}
+    secrets:
+      - postgres_username
+      - postgres_password
+
+  redis:
+    image: redis:8
+    command: redis-server --save 60 1 --loglevel warning
+
+  app:
+    image: kimsaram/wakeup
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DISCORD_APP_ID: ${DISCORD_APP_ID}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER_FILE: /run/secrets/postgres_username
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    secrets:
+      - postgres_username
+      - postgres_password
+
+secrets:
+  postgres_username:
+    file: postgres_username.txt
+  postgres_password:
+    file: postgres_password.txt
+
+volumes:
+  db:

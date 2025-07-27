@@ -36,7 +36,7 @@ export const guildSettings = {
       admin_role_id: updated.adminRoleId,
     };
     await knex.transaction(async (t) => {
-      if (await t("guild_settings").where("id", guildId)) {
+      if ((await t("guild_settings").where("id", guildId)).length) {
         await t("guild_settings").where("id", guildId).update(payload);
       } else {
         await t("guild_settings").insert({ ...payload, id: guildId });
