@@ -36,7 +36,7 @@ export const runInteractionHandler: InteractionHandler = {
       return;
     }
     const targetUserIds = userIds.filter((userId) =>
-      targetRole.members.some((member) => member.user.id === userId)
+      targetRole.members.some((member) => member.user.id === userId),
     );
 
     await runRecord.createMany(
@@ -57,7 +57,9 @@ export const runInteractionHandler: InteractionHandler = {
         new EmbedBuilder()
           .setTitle(`${dateFormatter.format(date.toPlainDate())} 기상점호`)
           .setDescription(
-            participatedMemberIds.map((id) => `- <@${id}>`).join("\n"),
+            participatedMemberIds.length
+              ? participatedMemberIds.map((id) => `- <@${id}>`).join("\n")
+              : "아직 아무도 점호에 참여하지 않았습니다",
           ),
       ],
     });

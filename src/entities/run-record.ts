@@ -21,14 +21,18 @@ function formatZoneDateTimeToPostgresTimestamp(zdt: Temporal.ZonedDateTime) {
   ].join(" ");
 }
 
+function postgresDateWithTimezone(expr: string) {
+  return `DATE(${expr} AT TIME ZONE '${Config.timezone}')`;
+}
+
 export const runRecord = {
   async getAll(guildId: string): Promise<RunRecord[]> {
     const result = await knex("run_record")
       .select("user_id")
-      .select(knex.raw("DATE(created_at) as date"))
+      .select(knex.raw(`${postgresDateWithTimezone('created_at')} as date`))
       .where("guild_id", guildId)
       .groupBy("user_id")
-      .groupBy(knex.raw("DATE(created_at)"));
+      .groupBy(knex.raw(`${postgresDateWithTimezone('created_at')}`));
 
     return result.map((row: { user_id: string; date: Date }) => ({
       guildId,
@@ -44,7 +48,7 @@ export const runRecord = {
     const result = await knex("run_record")
       .select("user_id")
       .where("guild_id", guildId)
-      .whereRaw("DATE(created_at) = ?", [
+      .whereRaw(`${postgresDateWithTimezone('created_at')} = ?`, [
         formatZoneDateTimeToPostgresDate(date),
       ])
       .groupBy("user_id");

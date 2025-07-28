@@ -35,6 +35,10 @@ export const guildSettings = {
       target_role_id: updated.targetRoleId,
       admin_role_id: updated.adminRoleId,
     };
+    if (!Object.values(payload).filter(Boolean).length) {
+      return;
+    }
+
     await knex.transaction(async (t) => {
       if ((await t("guild_settings").where("id", guildId)).length) {
         await t("guild_settings").where("id", guildId).update(payload);
