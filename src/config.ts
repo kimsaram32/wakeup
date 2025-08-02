@@ -31,11 +31,11 @@ function getRedisUrl() {
 
   return `redis://${host}:${port}/${db}`;
 }
-    
+
 function getEnvOrFile(name: string) {
   if (Deno.env.has(name)) {
     return Deno.env.get(name)!;
   }
-  const filePath = Deno.env.get(`${name}_FILE`)!
+  const filePath = Deno.env.get(`${name}_FILE`)!;
   return Deno.readTextFileSync(filePath).trim();
 }

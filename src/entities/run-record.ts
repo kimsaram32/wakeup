@@ -29,10 +29,10 @@ export const runRecord = {
   async getAll(guildId: string): Promise<RunRecord[]> {
     const result = await knex("run_record")
       .select("user_id")
-      .select(knex.raw(`${postgresDateWithTimezone('created_at')} as date`))
+      .select(knex.raw(`${postgresDateWithTimezone("created_at")} as date`))
       .where("guild_id", guildId)
       .groupBy("user_id")
-      .groupBy(knex.raw(`${postgresDateWithTimezone('created_at')}`));
+      .groupBy(knex.raw(`${postgresDateWithTimezone("created_at")}`));
 
     return result.map((row: { user_id: string; date: Date }) => ({
       guildId,
@@ -48,7 +48,7 @@ export const runRecord = {
     const result = await knex("run_record")
       .select("user_id")
       .where("guild_id", guildId)
-      .whereRaw(`${postgresDateWithTimezone('created_at')} = ?`, [
+      .whereRaw(`${postgresDateWithTimezone("created_at")} = ?`, [
         formatZoneDateTimeToPostgresDate(date),
       ])
       .groupBy("user_id");
