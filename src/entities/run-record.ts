@@ -41,6 +41,23 @@ export const runRecord = {
     }));
   },
 
+  /*
+   * Results are sorted ascending by date
+   */
+  async getByMemberId(guildId: string, memberId: string): Promise<RunRecord[]> {
+    const result = await knex("run_record")
+      .select(knex.raw(`${postgresDateWithTimezone("created_at")} as date`))
+      .where("guild_id", guildId)
+      .where("user_id", memberId)
+      .orderBy("date");
+
+    return result.map((row: { date: Date }) => ({
+      guildId,
+      userId: memberId,
+      date: row.date.toTemporalInstant().toZonedDateTimeISO(Config.timezone),
+    }));
+  },
+
   async getMemberIdsParticipatedToday(
     guildId: string,
     date: Temporal.ZonedDateTime,

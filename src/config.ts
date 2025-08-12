@@ -1,4 +1,9 @@
-import "@std/dotenv/load";
+import { loadSync } from "@std/dotenv";
+
+loadSync({
+  envPath: Deno.env.get("ENV_PATH") ?? ".env",
+  export: true,
+});
 
 export const Config = {
   discord: {

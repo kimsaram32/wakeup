@@ -43,5 +43,18 @@
     "name": "스트릭",
     "type": 1,
     "description": "설명"
+  },
+  {
+    "name": "참여자_기록",
+    "type": 1,
+    "description": "설명",
+    "options": [
+      {
+        "type": 6,
+        "name": "점호_참여자",
+        "description": "설명",
+        "required": true
+      }
+    ]
   }
 ]
